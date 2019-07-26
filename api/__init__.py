@@ -1,7 +1,8 @@
 from flask import Flask, current_app
 from flask_restful import Api
 from flask_cors import CORS
-from api.resources import Patient
+
+from api.resources import Patient, Report
 from db_wrapper import DBWrapper
 
 from config import DB_FILENAME
@@ -17,5 +18,5 @@ def create_app():
 
     api = Api(app)
     api.add_resource(Patient, "/patient")
-
+    api.add_resource(Report, "/report")
     return app
