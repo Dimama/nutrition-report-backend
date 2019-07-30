@@ -5,8 +5,8 @@ from models import Base, Patient
 
 
 class DBWrapper:
-    def __init__(self, db_filename):
-        self.engine = create_engine(f"sqlite:///{db_filename}")
+    def __init__(self, db_host, db_port, database, db_user, db_password):
+        self.engine = create_engine(f"postgres://{db_user}:{db_password}@{db_host}:{db_port}/{database}")
         Base.metadata.create_all(self.engine)
         self.session = sessionmaker(bind=self.engine)()
 
