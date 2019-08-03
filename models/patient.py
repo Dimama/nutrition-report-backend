@@ -1,13 +1,13 @@
-from models import Base
 from sqlalchemy import Column, Integer, String
+
+from models import Base
 
 
 class Patient(Base):
 
     __tablename__ = "patients"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
+    name = Column(String, primary_key=True)
 
     def to_json(self):
         return {"name": self.name}
