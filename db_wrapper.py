@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import IntegrityError
 
 from models import Base, Patient, Record, Sipping, EN
 
@@ -58,7 +57,13 @@ class DBWrapper:
         taste = data["taste"]
         reason_for_change = data["reasonForChange"]
 
-        try:
+        sipping = self.session.query(Sipping).filter(Sipping.reason_for_change == reason_for_change,
+                                                     Sipping.taste == taste,
+                                                     Sipping.volume_one == volume_one,
+                                                     Sipping.how_often == how_often,
+                                                     Sipping.mixture == mixture).first()
+
+        if sipping is None:
             sipping = Sipping(mixture=mixture,
                               volume_one=volume_one,
                               how_often=how_often,
@@ -66,15 +71,6 @@ class DBWrapper:
                               reason_for_change=reason_for_change)
             self.session.add(sipping)
             self.session.commit()
-        except IntegrityError:
-            self.session.rollback()
-            sipping = self.session.query(Sipping).filter(Sipping.reason_for_change == reason_for_change,
-                                                         Sipping.taste == taste,
-                                                         Sipping.volume_one == volume_one,
-                                                         Sipping.how_often == how_often,
-                                                         Sipping.mixture == mixture).first()
-            if sipping is None:
-                raise DBException("Sipping record not found")
 
         return sipping.id
 
@@ -85,7 +81,12 @@ class DBWrapper:
         how_often = data["howOften"]
         reason_for_change = data["reasonForChange"]
 
-        try:
+        en = self.session.query(EN).filter(EN.reason_for_change == reason_for_change,
+                                           EN.tube == tube,
+                                           EN.volume_one == volume_one,
+                                           EN.how_often == how_often,
+                                           EN.mixture == mixture).first()
+        if en is None:
             en = EN(tube=tube,
                     mixture=mixture,
                     volume_one=volume_one,
@@ -93,15 +94,6 @@ class DBWrapper:
                     reason_for_change=reason_for_change)
             self.session.add(en)
             self.session.commit()
-        except IntegrityError:
-            self.session.rollback()
-            en = self.session.query(EN).filter(EN.reason_for_change == reason_for_change,
-                                               EN.tube == tube,
-                                               EN.volume_one == volume_one,
-                                               EN.how_often == how_often,
-                                               EN.mixture == mixture).first()
-            if en is None:
-                raise DBException("EN record not found")
 
         return en.id
 
@@ -111,7 +103,3 @@ class DBWrapper:
             if value != "":
                 return False
         return True
-
-
-class DBException(Exception):
-    pass
