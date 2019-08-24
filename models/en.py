@@ -5,10 +5,10 @@ from models import Base
 
 class EN(Base):
 
-    __tablename__ = "EN"
+    __tablename__ = "enteral_nutrition"
     __table_args__ = (
         UniqueConstraint("mixture", "tube", "how_often", "volume_one", "reason_for_change",
-                         name="EN_unique_constraint"),
+                         name="enteral_nutriton_unique_constraint"),
     )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
